@@ -45,7 +45,8 @@ export default function OptionsPage() {
 
   useEffect(() => {
     getPromptTemplates().then(setPromptList);
-    optionsStorage.getAll().then(async (options) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    optionsStorage.getAll().then(async (options: any) => {
       // If this is the first time loading (using default theme), check system preference
       if (options.theme === defaultOptions.theme) {
         const isDark = window.matchMedia(

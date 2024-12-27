@@ -3,7 +3,7 @@
   "scripts": {
     "prepare": "husky",
     "prebuild": "rm -rf dist .parcel-cache",
-    "build": "NODE_NO_WARNINGS=1 parcel build --config @parcel/config-webextension",
+    "build": "NODE_NO_WARNINGS=1 parcel build --config @parcel/config-webextension --no-cache",
     "watch": "NODE_NO_WARNINGS=1 parcel watch --no-hmr --config @parcel/config-webextension",
     "lint": "run-p lint:*",
     "lint:typescript": "tsc --noEmit",
