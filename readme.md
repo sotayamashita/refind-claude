@@ -8,6 +8,8 @@
 [link-cws-keys]: https://github.com/fregante/chrome-webstore-upload-keys
 [link-amo-keys]: https://addons.mozilla.org/en-US/developers/addon/api/key
 
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsotayamashita%2Frefind-claude.svg?type=shield&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsotayamashita%2Frefind-claude?ref=badge_shield&issueType=license)
+
 > Cross-browser extension boilerplate - barebones template with Parcel 2, options handler and auto-publishing.
 
 Screenshot of extension options:
