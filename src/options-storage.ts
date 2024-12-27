@@ -1,4 +1,5 @@
 import OptionsSync from "webext-options-sync";
+import { loadDefaultTemplates } from "@/lib/template-loader";
 
 export interface PromptTemplate {
   id: string;
@@ -11,8 +12,16 @@ export interface Options {
   [key: string]: string | number | boolean;
 }
 
+// Convert default prompts to include IDs
+const defaultPromptsWithIds: PromptTemplate[] = loadDefaultTemplates().map(
+  (prompt) => ({
+    ...prompt,
+    id: `default-${prompt.title.toLowerCase().replace(/\s+/g, "-")}`,
+  }),
+);
+
 export const defaultOptions: Options = {
-  promptTemplatesJson: JSON.stringify([]),
+  promptTemplatesJson: JSON.stringify(defaultPromptsWithIds),
 };
 
 const optionsStorage = new OptionsSync<Options>({
