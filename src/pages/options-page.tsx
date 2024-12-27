@@ -1,115 +1,215 @@
 import "@/global.css";
-import optionsStorage from "@/options-storage";
 import { useEffect, useState } from "react";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  saveNewPrompt,
+  getPromptTemplates,
+  updatePrompt,
+  deletePrompt,
+  PromptTemplate,
+} from "@/options-storage";
+import { Check, Pencil, Trash2, X } from "lucide-react";
+import { SiGithub } from "@icons-pack/react-simple-icons";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function OptionsPage() {
-  const [colors, setColors] = useState({
-    colorRed: "0",
-    colorGreen: "0",
-    colorBlue: "0",
-  });
-  const [text, setText] = useState("");
+  const [newPrompt, setNewPrompt] = useState({ title: "", content: "" });
+  const [promptList, setPromptList] = useState<PromptTemplate[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [originalPrompt, setOriginalPrompt] = useState<PromptTemplate | null>(
+    null,
+  );
 
   useEffect(() => {
-    optionsStorage.getAll().then((options) => {
-      setColors({
-        colorRed: options.colorRed?.toString() || "0",
-        colorGreen: options.colorGreen?.toString() || "0",
-        colorBlue: options.colorBlue?.toString() || "0",
-      });
-      setText(options.text || "");
-    });
+    getPromptTemplates().then(setPromptList);
   }, []);
 
-  useEffect(() => {
-    optionsStorage.set({
-      colorRed: Number(colors.colorRed),
-      colorGreen: Number(colors.colorGreen),
-      colorBlue: Number(colors.colorBlue),
-    });
-  }, [colors]);
+  const onUserClickAddPrompt = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.preventDefault();
+    const savedPrompt = await saveNewPrompt(newPrompt);
+    setPromptList([savedPrompt, ...promptList]);
+    setNewPrompt({ title: "", content: "" });
+  };
 
-  useEffect(() => {
-    optionsStorage.set({ text });
-  }, [text]);
+  const onUserClickEdit = (prompt: PromptTemplate) => {
+    setOriginalPrompt(prompt);
+    setEditingId(prompt.id);
+  };
 
-  const handleColorChange =
-    (color: keyof typeof colors) => (value: number[]) => {
-      setColors((prev) => ({ ...prev, [color]: value[0].toString() }));
-    };
+  const onUserClickSave = async (prompt: PromptTemplate) => {
+    const updatedPrompt = await updatePrompt(prompt);
+    setPromptList(
+      promptList.map((p) => (p.id === updatedPrompt.id ? updatedPrompt : p)),
+    );
+    setEditingId(null);
+  };
+
+  const onUserClickDelete = async (promptId: string) => {
+    await deletePrompt(promptId);
+    setPromptList(promptList.filter((p) => p.id !== promptId));
+  };
+
+  const onUserClickCancel = () => {
+    if (originalPrompt) {
+      setPromptList(
+        promptList.map((p) =>
+          p.id === originalPrompt.id ? originalPrompt : p,
+        ),
+      );
+    }
+    setEditingId(null);
+    setOriginalPrompt(null);
+  };
+
+  const DeleteButton = ({ promptId }: { promptId: string }) => (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline" size="sm">
+          <Trash2 className="mr-1 size-4" /> Delete
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete this
+            prompt template.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={() => onUserClickDelete(promptId)}>
+            Continue
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
 
   return (
-    <div className="container mx-auto max-w-2xl p-4">
-      <div className="space-y-0.5">
-        <h1 className="text-2xl font-bold tracking-tight">Extension Options</h1>
+    <div className="mx-auto w-[640px] p-4">
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-lg font-medium">Prompt Templates</h1>
+        <a
+          href="https://github.com/sotayamashita/refind-claude"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gray-600 hover:text-gray-900"
+        >
+          <SiGithub />
+        </a>
       </div>
-      <div
-        data-orientation="horizontal"
-        role="none"
-        className="my-6 h-px w-full shrink-0 bg-border"
-      ></div>
-      <form id="options-form" className="space-y-6">
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium">Color Picker</h3>
-          <div className="space-y-4">
-            {(["Red", "Green", "Blue"] as const).map((color) => (
-              <div key={color} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label>{color}</Label>
-                  <Input
-                    type="number"
-                    name={`color${color}`}
-                    min="0"
-                    max="255"
-                    className="w-20"
-                    value={colors[`color${color}` as keyof typeof colors]}
-                    onChange={(e) =>
-                      setColors((prev) => ({
-                        ...prev,
-                        [`color${color}`]: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-                <Slider
-                  min={0}
-                  max={255}
-                  step={1}
-                  value={[
-                    Number(colors[`color${color}` as keyof typeof colors]),
-                  ]}
-                  onValueChange={handleColorChange(
-                    `color${color}` as keyof typeof colors,
-                  )}
-                />
-              </div>
-            ))}
-            <div
-              className="mt-4 h-20 w-full rounded-md"
-              style={{
-                backgroundColor: `rgb(${colors.colorRed}, ${colors.colorGreen}, ${colors.colorBlue})`,
-              }}
-            />
-          </div>
-        </div>
 
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium">Notice Content</h3>
-          <div className="space-y-2">
-            <Label htmlFor="notice-text">Text</Label>
-            <Input
-              id="notice-text"
-              type="text"
-              name="text"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-            />
-          </div>
-        </div>
-      </form>
+      <Card className="mb-6">
+        <CardContent className="pt-6">
+          <Input
+            placeholder="New prompt title"
+            value={newPrompt.title}
+            onChange={(e) => {
+              setNewPrompt({ ...newPrompt, title: e.target.value });
+            }}
+            className="mb-2"
+          />
+          <Textarea
+            placeholder="New prompt content"
+            value={newPrompt.content}
+            onChange={(e) => {
+              setNewPrompt({ ...newPrompt, content: e.target.value });
+            }}
+            className="mb-2 min-h-[140px]"
+          />
+          <Button onClick={onUserClickAddPrompt} className="w-full">
+            Add Prompt
+          </Button>
+        </CardContent>
+      </Card>
+
+      <div className="space-y-4">
+        {promptList.map((promptItem) => (
+          <Card key={promptItem.id} className="overflow-hidden">
+            <CardContent className="p-4">
+              {editingId === promptItem.id ? (
+                <>
+                  <Input
+                    value={promptItem.title}
+                    onChange={(e) => {
+                      setPromptList(
+                        promptList.map((p) =>
+                          p.id === promptItem.id
+                            ? { ...p, title: e.target.value }
+                            : p,
+                        ),
+                      );
+                    }}
+                    className="mb-2"
+                  />
+                  <Textarea
+                    value={promptItem.content}
+                    onChange={(e) => {
+                      setPromptList(
+                        promptList.map((p) =>
+                          p.id === promptItem.id
+                            ? { ...p, content: e.target.value }
+                            : p,
+                        ),
+                      );
+                    }}
+                    className="mb-2 min-h-[140px]"
+                  />
+                  <div className="flex justify-end space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={onUserClickCancel}
+                    >
+                      <X className="mr-1 size-4" /> Cancel
+                    </Button>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => onUserClickSave(promptItem)}
+                    >
+                      <Check className="mr-1 size-4" /> Save
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h3 className="mb-2 font-semibold">{promptItem.title}</h3>
+                  <p className="mb-4 overflow-y-auto text-sm text-gray-600">
+                    {promptItem.content}
+                  </p>
+                  <div className="flex justify-end space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onUserClickEdit(promptItem)}
+                    >
+                      <Pencil className="mr-1 size-4" /> Edit
+                    </Button>
+                    <DeleteButton promptId={promptItem.id} />
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

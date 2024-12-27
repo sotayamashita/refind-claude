@@ -1,9 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/chrome-manifest",
-  "name": "Awesome Extension",
-  "version": "0.0.0",
-  "description": "An awesome new browser extension",
-  "homepage_url": "https://github.com/fregante/browser-extension-template",
+  "name": "Refined Claude",
+  "version": "0.0.1",
+  "description": "Enhance Claude with templates and improved controls",
+  "homepage_url": "https://github.com/sotayamashita/refined-claude",
   "manifest_version": 3,
   "minimum_chrome_version": "121",
   "browser_specific_settings": {
@@ -16,10 +16,10 @@
     "128": "icon.png"
   },
   "permissions": ["storage"],
-  "host_permissions": ["https://github.com/*"],
+  "host_permissions": ["https://claude.ai/*"],
   "content_scripts": [
     {
-      "matches": ["https://github.com/fregante/browser-extension-template/*"],
+      "matches": ["https://claude.ai/*"],
       "js": ["content.ts"],
       "css": ["content.css"],
       "run_at": "document_end"
