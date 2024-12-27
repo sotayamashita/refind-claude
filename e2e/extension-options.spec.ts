@@ -1,61 +1,108 @@
 import { test, expect } from "./extention-fixtures";
-import { defaultOptions } from "../src/options-storage";
 
 test.describe("Chrome Extension Options Page", () => {
   test.beforeEach(async ({ page, extensionId, optionsPage }) => {
     await page.goto(`chrome-extension://${extensionId}/${optionsPage}`);
   });
 
-  test("should have default input values", async ({ page }) => {
-    const colorRedInput = page.locator('input[type="number"][name="colorRed"]');
-    await expect(colorRedInput).toHaveValue(defaultOptions.colorRed.toString());
+  test("should display empty prompt form", async ({ page }) => {
+    const titleInput = page.getByTestId("new-prompt-title");
+    const contentTextarea = page.getByTestId("new-prompt-content");
+    const addButton = page.getByTestId("add-prompt-button");
 
-    const colorGreenInput = page.locator(
-      'input[type="number"][name="colorGreen"]',
-    );
-    await expect(colorGreenInput).toHaveValue(
-      defaultOptions.colorGreen.toString(),
-    );
-
-    const colorBlueInput = page.locator(
-      'input[type="number"][name="colorBlue"]',
-    );
-    await expect(colorBlueInput).toHaveValue(
-      defaultOptions.colorBlue.toString(),
-    );
-
-    const textInput = page.locator('input[type="text"][name="text"]');
-    await expect(textInput).toHaveValue(defaultOptions.text);
+    await expect(titleInput).toBeVisible();
+    await expect(contentTextarea).toBeVisible();
+    await expect(addButton).toBeVisible();
+    await expect(titleInput).toHaveValue("");
+    await expect(contentTextarea).toHaveValue("");
   });
 
-  test("should update input values", async ({ page }) => {
-    const colorRedInput = page.locator('input[type="number"][name="colorRed"]');
-    await page.waitForTimeout(1000);
-    await colorRedInput.fill("0");
+  test("should add new prompt template", async ({ page }) => {
+    const titleInput = page.getByTestId("new-prompt-title");
+    const contentTextarea = page.getByTestId("new-prompt-content");
+    const addButton = page.getByRole("button", { name: "Add Prompt" });
 
-    const colorGreenInput = page.locator(
-      'input[type="number"][name="colorGreen"]',
-    );
-    await page.waitForTimeout(1000);
-    await colorGreenInput.fill("0");
+    await titleInput.fill("Test Prompt");
+    await contentTextarea.fill("Test Content");
+    await addButton.click();
 
-    const colorBlueInput = page.locator(
-      'input[type="number"][name="colorBlue"]',
-    );
-    await page.waitForTimeout(1000);
-    await colorBlueInput.fill("0");
+    // Check if the new prompt is added to the list
+    const promptCard = page.getByTestId("prompt-template-card").first();
+    await expect(promptCard.getByText("Test Prompt")).toBeVisible();
+    await expect(promptCard.getByText("Test Content")).toBeVisible();
 
-    const textInput = page.locator('input[type="text"][name="text"]');
-    await page.waitForTimeout(1000);
-    await textInput.fill("Test notice content");
+    // Check if the form is cleared
+    await expect(titleInput).toHaveValue("");
+    await expect(contentTextarea).toHaveValue("");
+  });
 
-    // Reload the page to see the changes
-    await page.reload();
+  test("should edit prompt template", async ({ page }) => {
+    // First add a prompt
+    const titleInput = page.getByTestId("new-prompt-title");
+    const contentTextarea = page.getByTestId("new-prompt-content");
+    await titleInput.fill("Original Title");
+    await contentTextarea.fill("Original Content");
+    await page.getByTestId("add-prompt-button").click();
 
-    // Check if the values are updated after reloading the page
-    await expect(colorRedInput).toHaveValue("0");
-    await expect(colorGreenInput).toHaveValue("0");
-    await expect(colorBlueInput).toHaveValue("0");
-    await expect(textInput).toHaveValue("Test notice content");
+    // Click edit button
+    const promptCard = page.getByTestId("prompt-template-card").first();
+    await promptCard.getByTestId("edit-button").click();
+
+    // Edit the prompt
+    const editTitleInput = promptCard.getByRole("textbox").first();
+    const editContentTextarea = promptCard.getByRole("textbox").nth(1);
+    await editTitleInput.fill("Updated Title");
+    await editContentTextarea.fill("Updated Content");
+
+    // Save changes
+    await promptCard.getByTestId("save-button").click();
+
+    // Verify changes
+    await expect(promptCard.getByText("Updated Title")).toBeVisible();
+    await expect(promptCard.getByText("Updated Content")).toBeVisible();
+  });
+
+  test("should cancel editing prompt template", async ({ page }) => {
+    // First add a prompt
+    const titleInput = page.getByTestId("new-prompt-title");
+    const contentTextarea = page.getByTestId("new-prompt-content");
+    await titleInput.fill("Original Title");
+    await contentTextarea.fill("Original Content");
+    await page.getByTestId("add-prompt-button").click();
+
+    // Get first card
+    const promptCard = page.getByTestId("prompt-template-card").first();
+
+    // Click edit button
+    await promptCard.getByTestId("edit-button").click();
+
+    // Start editing but cancel
+    const editTitleInput = promptCard.getByRole("textbox").first();
+    const editContentTextarea = promptCard.getByRole("textbox").nth(1);
+    await editTitleInput.fill("Cancelled Title");
+    await editContentTextarea.fill("Cancelled Content");
+    await promptCard.getByTestId("cancel-button").click();
+
+    // Verify original content remains
+    await expect(promptCard.getByText("Original Title")).toBeVisible();
+    await expect(promptCard.getByText("Original Content")).toBeVisible();
+  });
+
+  test("should delete prompt template", async ({ page }) => {
+    // First add a prompt
+    const titleInput = page.getByTestId("new-prompt-title");
+    const contentTextarea = page.getByTestId("new-prompt-content");
+    await titleInput.fill("To Be Deleted");
+    await contentTextarea.fill("Delete this content");
+    await page.getByTestId("add-prompt-button").click();
+
+    // Click delete button and confirm
+    const promptCard = page.getByTestId("prompt-template-card").first();
+    await promptCard.getByRole("button", { name: "Delete" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
+
+    // Verify prompt is deleted
+    await expect(page.getByText("To Be Deleted")).not.toBeVisible();
+    await expect(page.getByText("Delete this content")).not.toBeVisible();
   });
 });
