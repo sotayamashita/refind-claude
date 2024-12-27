@@ -9,6 +9,7 @@ export interface PromptTemplate {
 
 export interface Options {
   promptTemplatesJson: string;
+  theme: "light" | "dark";
   [key: string]: string | number | boolean;
 }
 
@@ -22,6 +23,11 @@ const defaultPromptsWithIds: PromptTemplate[] = loadDefaultTemplates().map(
 
 export const defaultOptions: Options = {
   promptTemplatesJson: JSON.stringify(defaultPromptsWithIds),
+  theme:
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light",
 };
 
 const optionsStorage = new OptionsSync<Options>({

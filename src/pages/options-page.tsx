@@ -10,8 +10,10 @@ import {
   updatePrompt,
   deletePrompt,
   PromptTemplate,
+  Options,
+  defaultOptions,
 } from "@/options-storage";
-import { Check, Pencil, Trash2, X } from "lucide-react";
+import { Check, Pencil, Trash2, X, Moon, Sun } from "lucide-react";
 import { SiGithub } from "@icons-pack/react-simple-icons";
 import {
   AlertDialog,
@@ -24,6 +26,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import optionsStorage from "@/options-storage";
 
 export default function OptionsPage() {
   const [newPrompt, setNewPrompt] = useState({ title: "", content: "" });
@@ -32,10 +41,35 @@ export default function OptionsPage() {
   const [originalPrompt, setOriginalPrompt] = useState<PromptTemplate | null>(
     null,
   );
+  const [theme, setTheme] = useState<Options["theme"]>(defaultOptions.theme);
 
   useEffect(() => {
     getPromptTemplates().then(setPromptList);
+    optionsStorage.getAll().then(async (options) => {
+      // If this is the first time loading (using default theme), check system preference
+      if (options.theme === defaultOptions.theme) {
+        const isDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
+        const systemTheme = isDark ? "dark" : "light";
+        await optionsStorage.set({ theme: systemTheme });
+        setTheme(systemTheme);
+        document.documentElement.classList.toggle("dark", isDark);
+      } else {
+        setTheme(options.theme);
+        document.documentElement.classList.toggle(
+          "dark",
+          options.theme === "dark",
+        );
+      }
+    });
   }, []);
+
+  const onThemeChange = async (newTheme: Options["theme"]) => {
+    setTheme(newTheme);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
+    await optionsStorage.set({ theme: newTheme });
+  };
 
   const onUserClickAddPrompt = async (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -105,14 +139,38 @@ export default function OptionsPage() {
     <div className="mx-auto w-[640px] p-4">
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-lg font-medium">Prompt Templates</h1>
-        <a
-          href="https://github.com/sotayamashita/refind-claude"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-gray-600 hover:text-gray-900"
-        >
-          <SiGithub />
-        </a>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" asChild>
+            <a
+              href="https://github.com/sotayamashita/refind-claude"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <SiGithub className="size-4" />
+            </a>
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                {theme === "light" ? (
+                  <Sun className="size-[1.2rem]" />
+                ) : (
+                  <Moon className="size-[1.2rem]" />
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => onThemeChange("light")}>
+                <Sun className="mr-2 size-4" />
+                Light
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onThemeChange("dark")}>
+                <Moon className="mr-2 size-4" />
+                Dark
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       <Card className="mb-6">
