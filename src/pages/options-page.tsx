@@ -182,6 +182,7 @@ export default function OptionsPage() {
               setNewPrompt({ ...newPrompt, title: e.target.value });
             }}
             className="mb-2"
+            data-testid="new-prompt-title"
           />
           <Textarea
             placeholder="New prompt content"
@@ -190,8 +191,13 @@ export default function OptionsPage() {
               setNewPrompt({ ...newPrompt, content: e.target.value });
             }}
             className="mb-2 min-h-[140px]"
+            data-testid="new-prompt-content"
           />
-          <Button onClick={onUserClickAddPrompt} className="w-full">
+          <Button
+            onClick={onUserClickAddPrompt}
+            className="w-full"
+            data-testid="add-prompt-button"
+          >
             Add Prompt
           </Button>
         </CardContent>
@@ -199,7 +205,11 @@ export default function OptionsPage() {
 
       <div className="space-y-4">
         {promptList.map((promptItem) => (
-          <Card key={promptItem.id} className="overflow-hidden">
+          <Card
+            key={promptItem.id}
+            className="overflow-hidden"
+            data-testid="prompt-template-card"
+          >
             <CardContent className="p-4">
               {editingId === promptItem.id ? (
                 <>
@@ -235,14 +245,19 @@ export default function OptionsPage() {
                       size="sm"
                       onClick={onUserClickCancel}
                     >
-                      <X className="mr-1 size-4" /> Cancel
+                      <X className="mr-1 size-4" data-testid="cancel-button" />{" "}
+                      Cancel
                     </Button>
                     <Button
                       variant="default"
                       size="sm"
                       onClick={() => onUserClickSave(promptItem)}
                     >
-                      <Check className="mr-1 size-4" /> Save
+                      <Check
+                        className="mr-1 size-4"
+                        data-testid="save-button"
+                      />{" "}
+                      Save
                     </Button>
                   </div>
                 </>
@@ -258,7 +273,11 @@ export default function OptionsPage() {
                       size="sm"
                       onClick={() => onUserClickEdit(promptItem)}
                     >
-                      <Pencil className="mr-1 size-4" /> Edit
+                      <Pencil
+                        className="mr-1 size-4"
+                        data-testid="edit-button"
+                      />{" "}
+                      Edit
                     </Button>
                     <DeleteButton promptId={promptItem.id} />
                   </div>

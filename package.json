@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "prepare": "husky",
-    "prebuild": "rm -rf dist",
+    "prebuild": "rm -rf dist .parcel-cache",
     "build": "NODE_NO_WARNINGS=1 parcel build --config @parcel/config-webextension",
     "watch": "NODE_NO_WARNINGS=1 parcel watch --no-hmr --config @parcel/config-webextension",
     "lint": "run-p lint:*",
