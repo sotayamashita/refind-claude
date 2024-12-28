@@ -6,7 +6,7 @@ A Chrome extension that enhances Claude with customizable prompt templates and i
 
 ## Preview
 
-<img src="media/previwer.png" alt="Preview" width="500" />
+<img src="media/preview.png" alt="Preview" width="500" />
 
 ## Features
 
