@@ -1,6 +1,7 @@
+/// <reference types="chrome"/>
+
 /* eslint-disable tailwindcss/no-custom-classname */
 import React from "react";
-import browser from "webextension-polyfill";
 import ReactDOM from "react-dom/client";
 import { getPromptTemplates } from "./options-storage";
 import { cn } from "./lib/utils";
@@ -63,7 +64,7 @@ const TemplateButton: FC = () => {
   };
 
   const handleSettingsClick = () => {
-    browser.runtime.sendMessage({ action: "openOptions" });
+    chrome.runtime.sendMessage({ action: "openOptions" });
     setOpen(false);
   };
 
