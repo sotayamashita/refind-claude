@@ -4,6 +4,10 @@
 
 A Chrome extension that enhances Claude with customizable prompt templates and improved controls. Built with modern web technologies for a seamless user experience.
 
+## Preview
+
+<img src="media/previewer.png" alt="Preview" width="500" />
+
 ## Features
 
 - 📝 **Prompt Templates**: Create, edit, and manage reusable prompt templates
