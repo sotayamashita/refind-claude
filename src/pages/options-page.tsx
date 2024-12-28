@@ -265,7 +265,7 @@ export default function OptionsPage() {
               ) : (
                 <>
                   <h3 className="mb-2 font-semibold">{promptItem.title}</h3>
-                  <p className="mb-4 overflow-y-auto text-sm text-gray-600">
+                  <p className="mb-4 line-clamp-2 overflow-y-auto text-sm text-muted-foreground">
                     {promptItem.content}
                   </p>
                   <div className="flex justify-end space-x-2">

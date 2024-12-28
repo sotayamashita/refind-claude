@@ -71,7 +71,7 @@
     "sourceDir": "dist",
     "run": {
       "startUrl": [
-        "https://github.com/fregante/browser-extension-template"
+        "https://github.com/sotayamashita/refind-claude"
       ]
     }
   },
