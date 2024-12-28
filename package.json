@@ -1,5 +1,6 @@
 {
   "private": true,
+  "license": "MIT",
   "scripts": {
     "prepare": "husky",
     "prebuild": "rm -rf dist .parcel-cache",
