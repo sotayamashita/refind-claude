@@ -26,12 +26,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import optionsStorage from "@/options-storage";
 
 export default function OptionsPage() {
@@ -150,27 +144,17 @@ export default function OptionsPage() {
               <SiGithub className="size-4" />
             </a>
           </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                {theme === "light" ? (
-                  <Sun className="size-[1.2rem]" />
-                ) : (
-                  <Moon className="size-[1.2rem]" />
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onThemeChange("light")}>
-                <Sun className="mr-2 size-4" />
-                Light
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onThemeChange("dark")}>
-                <Moon className="mr-2 size-4" />
-                Dark
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onThemeChange(theme === "light" ? "dark" : "light")}
+          >
+            {theme === "light" ? (
+              <Moon className="size-[1.2rem]" />
+            ) : (
+              <Sun className="size-[1.2rem]" />
+            )}
+          </Button>
         </div>
       </div>
 
@@ -265,7 +249,7 @@ export default function OptionsPage() {
               ) : (
                 <>
                   <h3 className="mb-2 font-semibold">{promptItem.title}</h3>
-                  <p className="mb-4 overflow-y-auto text-sm text-gray-600">
+                  <p className="mb-4 line-clamp-2 overflow-y-auto text-sm text-muted-foreground">
                     {promptItem.content}
                   </p>
                   <div className="flex justify-end space-x-2">
