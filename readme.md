@@ -1,6 +1,6 @@
-# Refined Claude
+# LLM Interface Plus
 
-[![Test](https://github.com/sotayamashita/refind-claude/actions/workflows/test.yml/badge.svg)](https://github.com/sotayamashita/refind-claude/actions/workflows/test.yml) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsotayamashita%2Frefind-claude.svg?type=shield&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsotayamashita%2Frefind-claude?ref=badge_shield&issueType=license) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Test](https://github.com/sotayamashita/llm-interface-plus/actions/workflows/test.yml/badge.svg)](https://github.com/sotayamashita/llm-interface-plus/actions/workflows/test.yml) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsotayamashita%2Fllm-interface-plus.svg?type=shield&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsotayamashita%2Fllm-interface-plus?ref=badge_shield&issueType=license) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A Chrome extension that enhances Claude with customizable prompt templates and improved controls. Built with modern web technologies for a seamless user experience.
 
@@ -29,7 +29,7 @@ A Chrome extension that enhances Claude with customizable prompt templates and i
 
 ### 🛠 Build locally
 
-1. Checkout the copied repository to your local machine eg. with `git clone https://github.com/sotayamashita/refind-claude`
+1. Checkout the copied repository to your local machine eg. with `git clone https://github.com/sotayamashita/llm-interface-plus`
 1. Run `npm install` to install all required dependencies
 1. Run `npm run build`
 

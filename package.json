@@ -1,5 +1,6 @@
 {
   "private": true,
+  "name": "llm-interface-plus",
   "license": "MIT",
   "scripts": {
     "prepare": "husky",
@@ -71,7 +72,7 @@
     "sourceDir": "dist",
     "run": {
       "startUrl": [
-        "https://github.com/sotayamashita/refind-claude"
+        "https://github.com/sotayamashita/llm-interface-plus"
       ]
     }
   },
