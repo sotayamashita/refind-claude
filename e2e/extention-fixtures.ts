@@ -11,7 +11,7 @@ export const test = base.extend<{
   async context({}, use) {
     const pathToExtension = path.join(__dirname, "../dist");
     const context = await chromium.launchPersistentContext("", {
-      headless: !!process.env.CI,
+      headless: false,
       args: [
         // Enable headless mode when running in CI environment, otherwise run with browser UI
         process.env.CI ? `--headless=new` : "",
