@@ -1,5 +1,5 @@
 import "@/global.css";
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, useRef, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -97,6 +97,85 @@ export default function OptionsPage() {
     setOriginalPrompt(null);
   };
 
+  const onExportTemplates = async () => {
+    const templates = await getPromptTemplates();
+    const blob = new Blob([JSON.stringify(templates, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "templates_backup.json";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    try {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const text = await file.text();
+      const imported = JSON.parse(text);
+      // Convert single object to array if needed
+      const templatesArray = Array.isArray(imported) ? imported : [imported];
+
+      // Validate and sanitize each template
+      const validTemplates = templatesArray
+        .filter((item) => {
+          return (
+            typeof item === "object" &&
+            item !== null &&
+            typeof item.title === "string" &&
+            item.title.trim() !== "" &&
+            typeof item.content === "string" &&
+            item.content.trim() !== ""
+          );
+        })
+        .map((item) => ({
+          id: `imported-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          title: item.title.trim(),
+          content: item.content.trim(),
+        }));
+
+      if (validTemplates.length === 0) {
+        alert("No valid templates found in import file");
+        return;
+      }
+
+      if (validTemplates.length < templatesArray.length) {
+        alert(
+          `Warning: Only ${validTemplates.length} out of ${templatesArray.length} templates were valid and imported.`,
+        );
+      }
+
+      // Merge with existing templates
+      const existing = await getPromptTemplates();
+      const combined = [...existing, ...validTemplates];
+      await optionsStorage.set({
+        promptTemplatesJson: JSON.stringify(combined),
+      });
+      setPromptList(combined);
+      // Show success message
+      alert(
+        `Successfully imported ${validTemplates.length} template${validTemplates.length === 1 ? "" : "s"}`,
+      );
+    } catch (err) {
+      alert(
+        "Error importing templates: " +
+          (err instanceof Error ? err.message : "Unknown error"),
+      );
+    }
+  };
+
+  const onImportTemplates = () => {
+    fileInputRef.current?.click();
+  };
+
   const DeleteButton = ({ promptId }: { promptId: string }) => (
     <Suspense
       fallback={
@@ -141,6 +220,19 @@ export default function OptionsPage() {
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-lg font-medium">Prompt Templates</h1>
         <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={onExportTemplates}>
+            Export Templates
+          </Button>
+          <Button variant="outline" size="sm" onClick={onImportTemplates}>
+            Import Templates
+          </Button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json"
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+          />
           <Button variant="ghost" size="icon" asChild>
             <a
               href="https://github.com/sotayamashita/refind-claude"
