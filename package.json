@@ -3,7 +3,7 @@
   "name": "llm-interface-plus",
   "license": "MIT",
   "scripts": {
-    "commit": "git-cz",
+    "commit": "git-cz --disable-emoji",
     "prepare": "husky",
     "prebuild": "rm -rf dist .parcel-cache",
     "build": "NODE_NO_WARNINGS=1 parcel build --config @parcel/config-webextension --no-cache",
