@@ -97,6 +97,85 @@ export default function OptionsPage() {
     setOriginalPrompt(null);
   };
 
+  const onExportTemplates = async () => {
+    const templates = await getPromptTemplates();
+    const blob = new Blob([JSON.stringify(templates, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "templates_backup.json";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const onImportTemplates = async () => {
+    try {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".json";
+      input.onchange = async () => {
+        if (input.files && input.files.length === 1) {
+          const file = input.files[0];
+          const text = await file.text();
+          const imported = JSON.parse(text);
+          // Validate structure
+          if (Array.isArray(imported)) {
+            // Validate and sanitize each template
+            const validTemplates = imported
+              .filter((item) => {
+                return (
+                  typeof item === "object" &&
+                  item !== null &&
+                  typeof item.title === "string" &&
+                  item.title.trim() !== "" &&
+                  typeof item.content === "string" &&
+                  item.content.trim() !== ""
+                );
+              })
+              .map((item) => ({
+                id: `imported-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                title: item.title.trim(),
+                content: item.content.trim(),
+              }));
+
+            if (validTemplates.length === 0) {
+              alert("No valid templates found in import file");
+              return;
+            }
+
+            if (validTemplates.length < imported.length) {
+              alert(
+                `Warning: Only ${validTemplates.length} out of ${imported.length} templates were valid and imported.`,
+              );
+            }
+
+            // Merge with existing templates
+            const existing = await getPromptTemplates();
+            const combined = [...existing, ...validTemplates];
+            await optionsStorage.set({
+              promptTemplatesJson: JSON.stringify(combined),
+            });
+            setPromptList(combined);
+            // Show success message
+            alert(
+              `Successfully imported ${imported.length} template${imported.length === 1 ? "" : "s"}`,
+            );
+          } else {
+            alert("Invalid import file: Templates must be in an array format");
+          }
+        }
+      };
+      input.click();
+    } catch (err) {
+      alert(
+        "Error importing templates: " +
+          (err instanceof Error ? err.message : "Unknown error"),
+      );
+    }
+  };
+
   const DeleteButton = ({ promptId }: { promptId: string }) => (
     <Suspense
       fallback={
@@ -141,6 +220,12 @@ export default function OptionsPage() {
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-lg font-medium">Prompt Templates</h1>
         <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={onExportTemplates}>
+            Export Templates
+          </Button>
+          <Button variant="outline" size="sm" onClick={onImportTemplates}>
+            Import Templates
+          </Button>
           <Button variant="ghost" size="icon" asChild>
             <a
               href="https://github.com/sotayamashita/refind-claude"

@@ -239,6 +239,42 @@ const initializeTemplateButton = async () => {
   root.render(React.createElement(TemplateButton));
 };
 
+// Listen for template insertion commands from background script
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "insertTemplate" && request.template) {
+    try {
+      const editor = document.querySelector(".ProseMirror");
+      if (editor instanceof HTMLElement) {
+        const isEmpty = editor.querySelector(".is-editor-empty");
+        if (isEmpty) {
+          editor.innerHTML = "";
+        }
+
+        const p = document.createElement("p");
+        p.textContent = request.template.content;
+        editor.append(p);
+        editor.focus();
+
+        const selection = window.getSelection();
+        if (selection) {
+          const range = document.createRange();
+          range.selectNodeContents(p);
+          range.collapse(false);
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
+        sendResponse({ success: true });
+      } else {
+        sendResponse({ success: false, error: "Editor not found" });
+      }
+    } catch (error) {
+      console.error("Error inserting template:", error);
+      sendResponse({ success: false, error: String(error) });
+    }
+    return true; // Keep the message channel open for the async response
+  }
+});
+
 const initialize = async () => {
   try {
     await waitForElement('[data-testid="style-selector-dropdown"]');
