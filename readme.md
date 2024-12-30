@@ -11,6 +11,7 @@ A Chrome extension that enhances Claude with customizable prompt templates and i
 ## Features
 
 - 📝 **Prompt Templates**: Create, edit, and manage reusable prompt templates
+- 💾 **Template Backup**: Import and export templates for backup and sharing
 - 🎨 **Modern UI**: Built with Shadcn UI and Tailwind CSS for a beautiful interface
 - 🌓 **Dark Mode Support**: Automatic theme detection with manual override option
 - ⚡ **Quick Access**: Easily access your templates from Claude's interface
