@@ -1,3 +1,4 @@
+/* eslint-disable tailwindcss/no-custom-classname */
 import React from "react";
 import type { FC } from "react";
 import { BookDashed, ChevronDown } from "lucide-react";
@@ -7,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { ClaudeTemplateList } from "@/providers/claude/template-list";
+import { ClaudeTemplateList } from "@/components/providers/claude/template-list";
 
 interface Template {
   title: string;

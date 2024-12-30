@@ -1,8 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { ClaudeTemplateButton } from "./template-button";
+import { ClaudeTemplateButton } from "@/components/providers/claude/template-button";
 import { getPromptTemplates } from "@/options-storage";
-import type { Template } from "@/features/templates/types";
+
+interface Template {
+  title: string;
+  content: string;
+}
 
 const waitForElement = (selector: string, timeout = 5000): Promise<Element> => {
   return new Promise((resolve, reject) => {

@@ -1,7 +1,11 @@
-import React from "react";
+/* eslint-disable tailwindcss/no-custom-classname */
 import type { FC } from "react";
 import { cn } from "@/lib/utils";
-import type { Template } from "@/features/templates/types";
+
+interface Template {
+  title: string;
+  content: string;
+}
 
 interface Props {
   templates: Template[];
