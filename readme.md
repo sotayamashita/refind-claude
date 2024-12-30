@@ -58,12 +58,34 @@ Here are some websites you should refer to:
 
 ## Development
 
-### Adding Templates
+### Managing Templates
 
 1. Click the extension icon to open options
 2. Use the form at the top to add new templates
 3. Templates can be edited or deleted after creation
 4. Access templates directly from Claude's interface via the template button
+
+### Importing and Exporting Templates
+
+You can backup and share your templates using the import/export functionality:
+
+#### Exporting Templates
+
+1. Click the "Export Templates" button in the options page
+2. Your templates will be downloaded as a JSON file
+
+#### Importing Templates
+
+1. Click the "Import Templates" button in the options page
+2. Select a JSON file containing templates
+3. Supported formats:
+   - Single template: `{ "title": "Template Name", "content": "Template Content" }`
+   - Multiple templates: `[{ "title": "Template 1", "content": "Content 1" }, ...]`
+4. Templates will be validated before import:
+   - Title and content are required
+   - Empty or invalid templates will be skipped
+   - Successfully imported templates are merged with existing ones
+5. You'll receive feedback about the import status
 
 ### Building & Testing
 
