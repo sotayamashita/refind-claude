@@ -3,6 +3,7 @@
   "name": "llm-interface-plus",
   "license": "MIT",
   "scripts": {
+    "commit": "git-cz",
     "prepare": "husky",
     "prebuild": "rm -rf dist .parcel-cache",
     "build": "NODE_NO_WARNINGS=1 parcel build --config @parcel/config-webextension --no-cache",
@@ -30,6 +31,9 @@
     "webext-options-sync": "^4.3.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@commitlint/types": "^19.5.0",
     "@eslint/js": "^9.17.0",
     "@icons-pack/react-simple-icons": "^10.2.0",
     "@parcel/config-webextension": "^2.13.0",
@@ -44,6 +48,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-tailwindcss": "^3.17.5",
+    "git-cz": "^4.9.0",
     "globals": "^15.14.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.2.11",
@@ -58,6 +63,11 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.1"
+  },
+  "config": {
+    "commitizen": {
+      "path": "git-cz"
+    }
   },
   "@parcel/resolver-default": {
     "packageExports": true
