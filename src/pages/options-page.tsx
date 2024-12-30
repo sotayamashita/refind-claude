@@ -13,8 +13,7 @@ import {
   Options,
   defaultOptions,
 } from "@/options-storage";
-import { Check, Pencil, Trash2, X, Moon, Sun } from "lucide-react";
-import { SiGithub } from "@icons-pack/react-simple-icons";
+import { Check, Pencil, Trash2, X, Moon, Sun, Github } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -141,7 +140,7 @@ export default function OptionsPage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <SiGithub className="size-4" />
+              <Github className="size-4" />
             </a>
           </Button>
           <Button
