@@ -118,7 +118,9 @@ test.describe("Chrome Extension Options Page", () => {
     // Verify template is imported
     const promptCard = page.getByTestId("prompt-template-card").first();
     await expect(promptCard.getByText("Test Template")).toBeVisible();
-    await expect(promptCard.getByText("This is a test template content")).toBeVisible();
+    await expect(
+      promptCard.getByText("This is a test template content"),
+    ).toBeVisible();
   });
 
   test("should import multiple templates from JSON", async ({ page }) => {
@@ -137,11 +139,17 @@ test.describe("Chrome Extension Options Page", () => {
 
     // Verify content of each template
     await expect(page.getByText("First Template")).toBeVisible();
-    await expect(page.getByText("Content for the first template")).toBeVisible();
+    await expect(
+      page.getByText("Content for the first template"),
+    ).toBeVisible();
     await expect(page.getByText("Second Template")).toBeVisible();
-    await expect(page.getByText("Content for the second template")).toBeVisible();
+    await expect(
+      page.getByText("Content for the second template"),
+    ).toBeVisible();
     await expect(page.getByText("Third Template")).toBeVisible();
-    await expect(page.getByText("Content for the third template")).toBeVisible();
+    await expect(
+      page.getByText("Content for the third template"),
+    ).toBeVisible();
   });
 
   test("should show error for invalid JSON", async ({ page }) => {

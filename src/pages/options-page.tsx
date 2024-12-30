@@ -220,10 +220,20 @@ export default function OptionsPage() {
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-lg font-medium">Prompt Templates</h1>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={onExportTemplates}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onExportTemplates}
+            data-testid="export-templates-button"
+          >
             Export Templates
           </Button>
-          <Button variant="outline" size="sm" onClick={onImportTemplates}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onImportTemplates}
+            data-testid="import-templates-button"
+          >
             Import Templates
           </Button>
           <input
@@ -232,6 +242,7 @@ export default function OptionsPage() {
             accept=".json"
             style={{ display: "none" }}
             onChange={handleFileChange}
+            data-testid="template-file-input"
           />
           <Button variant="ghost" size="icon" asChild>
             <a
