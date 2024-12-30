@@ -1,5 +1,5 @@
 import "@/global.css";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,17 +14,9 @@ import {
   defaultOptions,
 } from "@/options-storage";
 import { Check, Pencil, Trash2, X, Moon, Sun, Github } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+// Alert dialog is only used for delete confirmation, so we can load it dynamically
+const AlertDialog = React.lazy(() => import("@/components/ui/alert-dialog"));
+
 import optionsStorage from "@/options-storage";
 
 export default function OptionsPage() {
@@ -105,28 +97,42 @@ export default function OptionsPage() {
   };
 
   const DeleteButton = ({ promptId }: { promptId: string }) => (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
+    <Suspense
+      fallback={
         <Button variant="outline" size="sm">
           <Trash2 className="mr-1 size-4" /> Delete
         </Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete this
-            prompt template.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => onUserClickDelete(promptId)}>
-            Continue
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+      }
+    >
+      <AlertDialog>
+        {(
+          Dialog: import("@/components/ui/alert-dialog").AlertDialogNamespace,
+        ) => (
+          <Dialog.Root>
+            <Dialog.Trigger asChild>
+              <Button variant="outline" size="sm">
+                <Trash2 className="mr-1 size-4" /> Delete
+              </Button>
+            </Dialog.Trigger>
+            <Dialog.Content>
+              <Dialog.Header>
+                <Dialog.Title>Are you sure?</Dialog.Title>
+                <Dialog.Description>
+                  This action cannot be undone. This will permanently delete
+                  this prompt template.
+                </Dialog.Description>
+              </Dialog.Header>
+              <Dialog.Footer>
+                <Dialog.Cancel>Cancel</Dialog.Cancel>
+                <Dialog.Action onClick={() => onUserClickDelete(promptId)}>
+                  Continue
+                </Dialog.Action>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog.Root>
+        )}
+      </AlertDialog>
+    </Suspense>
   );
 
   return (

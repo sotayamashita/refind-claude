@@ -124,16 +124,45 @@ const AlertDialogCancel = React.forwardRef<
 ));
 AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName;
 
-export {
-  AlertDialog,
-  AlertDialogPortal,
-  AlertDialogOverlay,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogAction,
-  AlertDialogCancel,
+// Define the type for our AlertDialog namespace
+export interface AlertDialogNamespace {
+  Root: typeof AlertDialog;
+  Trigger: typeof AlertDialogTrigger;
+  Portal: typeof AlertDialogPortal;
+  Overlay: typeof AlertDialogOverlay;
+  Content: typeof AlertDialogContent;
+  Header: typeof AlertDialogHeader;
+  Footer: typeof AlertDialogFooter;
+  Title: typeof AlertDialogTitle;
+  Description: typeof AlertDialogDescription;
+  Action: typeof AlertDialogAction;
+  Cancel: typeof AlertDialogCancel;
+}
+
+// Create the namespace object
+const AlertDialogComponents: AlertDialogNamespace = {
+  Root: AlertDialog,
+  Trigger: AlertDialogTrigger,
+  Portal: AlertDialogPortal,
+  Overlay: AlertDialogOverlay,
+  Content: AlertDialogContent,
+  Header: AlertDialogHeader,
+  Footer: AlertDialogFooter,
+  Title: AlertDialogTitle,
+  Description: AlertDialogDescription,
+  Action: AlertDialogAction,
+  Cancel: AlertDialogCancel,
 };
+
+// Create a wrapper component that provides the namespace through render props
+interface AlertDialogWrapperProps {
+  children: (components: AlertDialogNamespace) => React.ReactNode;
+}
+
+const AlertDialogWrapper: React.FC<AlertDialogWrapperProps> = ({
+  children,
+}) => {
+  return <>{children(AlertDialogComponents)}</>;
+};
+
+export default AlertDialogWrapper;
