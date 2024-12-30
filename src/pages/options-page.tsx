@@ -13,7 +13,8 @@ import {
   Options,
   defaultOptions,
 } from "@/options-storage";
-import { Check, Pencil, Trash2, X, Moon, Sun, Github } from "lucide-react";
+import { SiGithub as Github } from "@icons-pack/react-simple-icons";
+import { Check, Pencil, Trash2, X, Moon, Sun } from "lucide-react";
 // Alert dialog is only used for delete confirmation, so we can load it dynamically
 const AlertDialog = React.lazy(() => import("@/components/ui/alert-dialog"));
 
