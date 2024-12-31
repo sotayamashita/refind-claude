@@ -1,9 +1,17 @@
-import { initialize } from "./providers/claude/template-injector";
+import { initializeClaude } from "./providers/claude/template-injector";
+
+const isClaude = () => window.location.hostname.endsWith("claude.ai");
+
+const initializeIfClaude = () => {
+  if (isClaude()) {
+    initializeClaude();
+  }
+};
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initialize);
+  document.addEventListener("DOMContentLoaded", initializeIfClaude);
 } else {
-  initialize();
+  initializeIfClaude();
 }
 
 let lastUrl = location.href;
@@ -11,6 +19,6 @@ new MutationObserver(() => {
   const url = location.href;
   if (url !== lastUrl) {
     lastUrl = url;
-    initialize();
+    initializeIfClaude();
   }
 }).observe(document, { subtree: true, childList: true });
