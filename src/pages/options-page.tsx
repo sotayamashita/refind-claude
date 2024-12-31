@@ -179,8 +179,13 @@ export default function OptionsPage() {
   const DeleteButton = ({ promptId }: { promptId: string }) => (
     <Suspense
       fallback={
-        <Button variant="outline" size="sm">
-          <Trash2 className="mr-1 size-4" /> Delete
+        <Button
+          variant="outline"
+          size="sm"
+          data-testid="prompt-list-item-delete-button"
+        >
+          <Trash2 className="mr-1 size-4" />
+          Delete
         </Button>
       }
     >
@@ -190,8 +195,13 @@ export default function OptionsPage() {
         ) => (
           <Dialog.Root>
             <Dialog.Trigger asChild>
-              <Button variant="outline" size="sm">
-                <Trash2 className="mr-1 size-4" /> Delete
+              <Button
+                variant="outline"
+                size="sm"
+                data-testid="prompt-list-item-delete-button"
+              >
+                <Trash2 className="mr-1 size-4" />
+                Delete
               </Button>
             </Dialog.Trigger>
             <Dialog.Content>
@@ -203,8 +213,13 @@ export default function OptionsPage() {
                 </Dialog.Description>
               </Dialog.Header>
               <Dialog.Footer>
-                <Dialog.Cancel>Cancel</Dialog.Cancel>
-                <Dialog.Action onClick={() => onUserClickDelete(promptId)}>
+                <Dialog.Cancel data-testid="prompt-list-item-delete-cancel">
+                  Cancel
+                </Dialog.Cancel>
+                <Dialog.Action
+                  onClick={() => onUserClickDelete(promptId)}
+                  data-testid="prompt-list-item-delete-confirm"
+                >
                   Continue
                 </Dialog.Action>
               </Dialog.Footer>
@@ -220,10 +235,20 @@ export default function OptionsPage() {
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-lg font-medium">Prompt Templates</h1>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={onExportTemplates}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onExportTemplates}
+            data-testid="prompt-list-export-button"
+          >
             Export Templates
           </Button>
-          <Button variant="outline" size="sm" onClick={onImportTemplates}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onImportTemplates}
+            data-testid="prompt-list-import-button"
+          >
             Import Templates
           </Button>
           <input
@@ -265,7 +290,7 @@ export default function OptionsPage() {
               setNewPrompt({ ...newPrompt, title: e.target.value });
             }}
             className="mb-2"
-            data-testid="new-prompt-title"
+            data-testid="prompt-form-title-input"
           />
           <Textarea
             placeholder="New prompt content"
@@ -274,12 +299,12 @@ export default function OptionsPage() {
               setNewPrompt({ ...newPrompt, content: e.target.value });
             }}
             className="mb-2 min-h-[140px]"
-            data-testid="new-prompt-content"
+            data-testid="prompt-form-content-input"
           />
           <Button
             onClick={onUserClickAddPrompt}
             className="w-full"
-            data-testid="add-prompt-button"
+            data-testid="prompt-form-submit-button"
           >
             Add Prompt
           </Button>
@@ -291,7 +316,7 @@ export default function OptionsPage() {
           <Card
             key={promptItem.id}
             className="overflow-hidden"
-            data-testid="prompt-template-card"
+            data-testid="prompt-list-item"
           >
             <CardContent className="p-4">
               {editingId === promptItem.id ? (
@@ -308,6 +333,7 @@ export default function OptionsPage() {
                       );
                     }}
                     className="mb-2"
+                    data-testid="prompt-list-item-edit-title"
                   />
                   <Textarea
                     value={promptItem.content}
@@ -321,46 +347,49 @@ export default function OptionsPage() {
                       );
                     }}
                     className="mb-2 min-h-[140px]"
+                    data-testid="prompt-list-item-edit-content"
                   />
                   <div className="flex justify-end space-x-2">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={onUserClickCancel}
+                      data-testid="prompt-list-item-edit-cancel"
                     >
-                      <X className="mr-1 size-4" data-testid="cancel-button" />{" "}
-                      Cancel
+                      <X className="mr-1 size-4" /> Cancel
                     </Button>
                     <Button
                       variant="default"
                       size="sm"
                       onClick={() => onUserClickSave(promptItem)}
+                      data-testid="prompt-list-item-edit-submit"
                     >
-                      <Check
-                        className="mr-1 size-4"
-                        data-testid="save-button"
-                      />{" "}
-                      Save
+                      <Check className="mr-1 size-4" /> Save
                     </Button>
                   </div>
                 </>
               ) : (
                 <>
-                  <h3 className="mb-2 font-semibold">{promptItem.title}</h3>
-                  <p className="mb-4 line-clamp-2 overflow-y-auto text-sm text-muted-foreground">
+                  <h3
+                    className="mb-2 font-semibold"
+                    data-testid="prompt-list-item-title"
+                  >
+                    {promptItem.title}
+                  </h3>
+                  <p
+                    className="mb-4 line-clamp-2 overflow-y-auto text-sm text-muted-foreground"
+                    data-testid="prompt-list-item-content"
+                  >
                     {promptItem.content}
                   </p>
                   <div className="flex justify-end space-x-2">
                     <Button
                       variant="outline"
                       size="sm"
+                      data-testid="prompt-list-item-edit-button"
                       onClick={() => onUserClickEdit(promptItem)}
                     >
-                      <Pencil
-                        className="mr-1 size-4"
-                        data-testid="edit-button"
-                      />{" "}
-                      Edit
+                      <Pencil className="mr-1 size-4" /> Edit
                     </Button>
                     <DeleteButton promptId={promptItem.id} />
                   </div>
