@@ -5,12 +5,12 @@ on:
     paths-ignore:
       - "readme.md"
       - ".cursorrules"
-      - "copilot-instructions.md"
+      - ".github/copilot-instructions.md"
   push:
     paths-ignore:
       - "readme.md"
       - ".cursorrules"
-      - "copilot-instructions.md"
+      - ".github/copilot-instructions.md"
 
 jobs:
   security:
