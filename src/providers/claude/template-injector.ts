@@ -106,7 +106,7 @@ const initializeTemplateButton = async () => {
   );
 };
 
-export const initialize = async () => {
+export const initializeClaude = async () => {
   try {
     await waitForElement('[data-testid="style-selector-dropdown"]');
     await sleep(500);
