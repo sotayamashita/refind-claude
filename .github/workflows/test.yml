@@ -4,9 +4,13 @@ on:
   pull_request:
     paths-ignore:
       - "readme.md"
+      - ".cursorrules"
+      - "copilot-instructions.md"
   push:
     paths-ignore:
       - "readme.md"
+      - ".cursorrules"
+      - "copilot-instructions.md"
 
 jobs:
   security:
