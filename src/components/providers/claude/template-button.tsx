@@ -48,7 +48,7 @@ export const ClaudeTemplateButton: FC<Props> = ({
             "border-0.5 text-sm rounded-md border-transparent",
             "transition text-text-500 hover:text-text-200",
           )}
-          data-testid="template-selector-dropdown"
+          data-testid="template-selector-dropdown-by-llm-interface-plus"
           type="button"
         >
           <div

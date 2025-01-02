@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { ClaudeTemplateButton } from "@/components/providers/claude/template-button";
 import { getPromptTemplates } from "@/options-storage";
 import { waitForElement, sleep, handleSettingsClick } from "@/lib/utils";
+import { ChatGPTTemplateButton } from "@/components/providers/chatgpt/template-button";
 
 interface Template {
   title: string;
@@ -33,54 +33,59 @@ const handleTemplateSelect = (template: Template) => {
   }
 };
 
-const initializeTemplateButton = async () => {
-  const sonnetButton = await waitForElement(
-    '[data-testid="model-selector-dropdown"]',
+export const initializeTemplateButton = async () => {
+  const editorWrapper = await waitForElement("#composer-background");
+  if (!editorWrapper) {
+    console.error("Could not find editor");
+    return;
+  }
+
+  // FIXME: This is a hack to get the tool items
+  const toolNodes = editorWrapper.querySelectorAll(
+    'div[style*="view-transition-name:var"]',
   );
-  if (!sonnetButton) {
-    console.error("Could not find Sonnet button");
+  if (toolNodes.length === 0) {
+    console.error("Could not find tool items");
     return;
   }
 
-  const targetContainer = sonnetButton.parentElement;
-  if (!targetContainer) {
-    console.error("Could not find target container");
+  // FIXME: This is a hack to get the tool list
+  const toolList = toolNodes[0].parentElement;
+  if (!toolList) {
+    console.error("Could not find tool list");
     return;
   }
 
+  // Check if template button already exists
   if (
-    targetContainer.querySelector(
+    toolList.querySelector(
       '[data-testid="template-selector-dropdown-by-llm-interface-plus"]',
     )
   ) {
     return;
   }
 
+  // Get the templates
   const templates = await getPromptTemplates();
 
   // Create the outer wrapper
-  const templateOuterWrapper = document.createElement("div");
-  templateOuterWrapper.className = "flex items-center min-w-0 max-w-full";
+  const outerWrapper = document.createElement("div");
 
   // Create the inner wrapper
-  const templateInnerWrapper = document.createElement("div");
-  templateInnerWrapper.className = "min-w-24";
-  templateInnerWrapper.setAttribute("type", "button");
-  templateInnerWrapper.dataset.state = "closed";
-  templateInnerWrapper.style.opacity = "1";
+  const innerWrapper = document.createElement("div");
 
   // Append the inner wrapper to the outer wrapper
-  templateOuterWrapper.appendChild(templateInnerWrapper);
+  outerWrapper.appendChild(innerWrapper);
 
-  // Append the outer wrapper to the target container
-  targetContainer.appendChild(templateOuterWrapper);
+  // Append the outer wrapper to the tool list
+  toolList.appendChild(outerWrapper);
 
   // Create the root for the React component
-  const root = ReactDOM.createRoot(templateInnerWrapper);
+  const root = ReactDOM.createRoot(innerWrapper);
 
   // Render the React component
   root.render(
-    React.createElement(ClaudeTemplateButton, {
+    React.createElement(ChatGPTTemplateButton, {
       templates,
       onTemplateSelect: handleTemplateSelect,
       onSettingsClick: handleSettingsClick,
@@ -88,9 +93,9 @@ const initializeTemplateButton = async () => {
   );
 };
 
-export const initializeClaude = async () => {
+export const initializeChatGPT = async () => {
   try {
-    await waitForElement('[data-testid="style-selector-dropdown"]');
+    await waitForElement('button[aria-label="Search the web"]');
     await sleep(500);
     await initializeTemplateButton();
   } catch (error) {

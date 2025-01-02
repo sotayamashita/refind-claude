@@ -2,11 +2,24 @@
 
 [![Test](https://github.com/sotayamashita/llm-interface-plus/actions/workflows/test.yml/badge.svg)](https://github.com/sotayamashita/llm-interface-plus/actions/workflows/test.yml) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsotayamashita%2Fllm-interface-plus.svg?type=shield&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsotayamashita%2Fllm-interface-plus?ref=badge_shield&issueType=license) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
-A Chrome extension that enhances Claude with customizable prompt templates and improved controls. Built with modern web technologies for a seamless user experience.
+> 🤖 Supported LLMs: [ChatGPT](https://chat.openai.com) · [Claude](https://claude.ai)
+
+A Chrome extension that enhances ChatGPT and Claude with customizable prompt templates and improved controls. Built with modern web technologies for a seamless user experience.
 
 ## Preview
 
-<img src="media/preview.png" alt="Preview" width="500" />
+<div align="center">
+  <table>
+    <tr>
+      <td align="center"><b>ChatGPT Interface</b></td>
+      <td align="center"><b>Claude Interface</b></td>
+    </tr>
+    <tr>
+      <td><img src="media/chatgpt-preview.png" alt="ChatGPT Preview" width="400" /></td>
+      <td><img src="media/claude-preview.png" alt="Claude Preview" width="400" /></td>
+    </tr>
+  </table>
+</div>
 
 ## Features
 
@@ -14,8 +27,9 @@ A Chrome extension that enhances Claude with customizable prompt templates and i
 - 💾 **Template Backup**: Import and export templates for backup and sharing
 - 🎨 **Modern UI**: Built with Shadcn UI and Tailwind CSS for a beautiful interface
 - 🌓 **Dark Mode Support**: Automatic theme detection with manual override option
-- ⚡ **Quick Access**: Easily access your templates from Claude's interface
+- ⚡ **Quick Access**: Easily access your templates from ChatGPT and Claude interfaces
 - 🔄 **Sync Storage**: Templates are synced across your Chrome instances
+- 🤖 **Multi-LLM Support**: Works with both ChatGPT and Claude
 
 ## Tech Stack
 
@@ -64,7 +78,7 @@ Here are some websites you should refer to:
 1. Click the extension icon to open options
 2. Use the form at the top to add new templates
 3. Templates can be edited or deleted after creation
-4. Access templates directly from Claude's interface via the template button
+4. Access templates directly from ChatGPT and Claude interfaces via the template button
 
 ### Importing and Exporting Templates
 
