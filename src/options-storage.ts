@@ -4,6 +4,7 @@ export interface PromptTemplate {
   id: string;
   title: string;
   content: string;
+  category?: string; // Optional field for template categorization
 }
 
 export interface Options {
@@ -37,6 +38,7 @@ export async function saveNewPrompt(newPrompt: Omit<PromptTemplate, "id">) {
   const promptWithId: PromptTemplate = {
     ...newPrompt,
     id: new Date().toISOString(),
+    category: newPrompt.category || "Uncategorized", // Set default category if none provided
   };
 
   await optionsStorage.set({

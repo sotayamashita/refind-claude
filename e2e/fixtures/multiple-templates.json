@@ -1,14 +1,17 @@
 [
   {
     "title": "First Template",
-    "content": "Content for the first template"
+    "content": "Content for the first template",
+    "category": "Work"
   },
   {
     "title": "Second Template",
-    "content": "Content for the second template"
+    "content": "Content for the second template",
+    "category": "Personal"
   },
   {
     "title": "Third Template",
-    "content": "Content for the third template"
+    "content": "Content for the third template",
+    "category": ""
   }
 ]

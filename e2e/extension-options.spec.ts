@@ -208,6 +208,57 @@ test.describe("Chrome Extension Options Page", () => {
     ).toHaveText("Content for the third template");
   });
 
+  test("should create and filter templates by category", async ({ page }) => {
+    // Create templates with different categories
+    const titleInput = page.getByTestId("prompt-form-title-input");
+    const contentTextarea = page.getByTestId("prompt-form-content-input");
+    const categoryInput = page.getByTestId("prompt-form-category-input");
+
+    // Add template with category "Work"
+    await titleInput.fill("Work Template");
+    await contentTextarea.fill("Work Content");
+    await categoryInput.fill("Work");
+    await page.getByTestId("prompt-form-submit-button").click();
+
+    // Add template with category "Personal"
+    await titleInput.fill("Personal Template");
+    await contentTextarea.fill("Personal Content");
+    await categoryInput.fill("Personal");
+    await page.getByTestId("prompt-form-submit-button").click();
+
+    // Add template without category
+    await titleInput.fill("No Category Template");
+    await contentTextarea.fill("Uncategorized Content");
+    await page.getByTestId("prompt-form-submit-button").click();
+
+    // Test category filter
+    const categoryFilter = page.getByTestId("category-filter");
+    await expect(categoryFilter).toBeVisible();
+
+    // Check "All" filter (default)
+    await expect(page.getByText("Work Template")).toBeVisible();
+    await expect(page.getByText("Personal Template")).toBeVisible();
+    await expect(page.getByText("No Category Template")).toBeVisible();
+
+    // Filter by "Work" category
+    await categoryFilter.selectOption("Work");
+    await expect(page.getByText("Work Template")).toBeVisible();
+    await expect(page.getByText("Personal Template")).not.toBeVisible();
+    await expect(page.getByText("No Category Template")).not.toBeVisible();
+
+    // Filter by "Personal" category
+    await categoryFilter.selectOption("Personal");
+    await expect(page.getByText("Work Template")).not.toBeVisible();
+    await expect(page.getByText("Personal Template")).toBeVisible();
+    await expect(page.getByText("No Category Template")).not.toBeVisible();
+
+    // Filter "Uncategorized"
+    await categoryFilter.selectOption("Uncategorized");
+    await expect(page.getByText("Work Template")).not.toBeVisible();
+    await expect(page.getByText("Personal Template")).not.toBeVisible();
+    await expect(page.getByText("No Category Template")).toBeVisible();
+  });
+
   test("should export prompt templates", async ({ page }) => {
     // Setup file chooser and download promise
     const fileChooserPromise = page.waitForEvent("filechooser");
@@ -242,14 +293,29 @@ test.describe("Chrome Extension Options Page", () => {
     const parsedContent = JSON.parse(fileContent);
 
     // Verify templates are imported
-    const templatesWithoutIds = parsedContent.map(({ title, content }) => ({
-      title,
-      content,
-    }));
+    const templatesWithoutIds = parsedContent.map(
+      ({ title, content, category }) => ({
+        title,
+        content,
+        category,
+      }),
+    );
     expect(templatesWithoutIds).toEqual([
-      { title: "First Template", content: "Content for the first template" },
-      { title: "Second Template", content: "Content for the second template" },
-      { title: "Third Template", content: "Content for the third template" },
+      {
+        title: "First Template",
+        content: "Content for the first template",
+        category: "Work",
+      },
+      {
+        title: "Second Template",
+        content: "Content for the second template",
+        category: "Personal",
+      },
+      {
+        title: "Third Template",
+        content: "Content for the third template",
+        category: "",
+      },
     ]);
   });
 });

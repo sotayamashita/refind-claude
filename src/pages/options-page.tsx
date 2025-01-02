@@ -21,8 +21,13 @@ const AlertDialog = React.lazy(() => import("@/components/ui/alert-dialog"));
 import optionsStorage from "@/options-storage";
 
 export default function OptionsPage() {
-  const [newPrompt, setNewPrompt] = useState({ title: "", content: "" });
+  const [newPrompt, setNewPrompt] = useState<Omit<PromptTemplate, "id">>({
+    title: "",
+    content: "",
+    category: "",
+  });
   const [promptList, setPromptList] = useState<PromptTemplate[]>([]);
+  const [filterCategory, setFilterCategory] = useState<string>("All");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [originalPrompt, setOriginalPrompt] = useState<PromptTemplate | null>(
     null,
@@ -64,7 +69,7 @@ export default function OptionsPage() {
     event.preventDefault();
     const savedPrompt = await saveNewPrompt(newPrompt);
     setPromptList([savedPrompt, ...promptList]);
-    setNewPrompt({ title: "", content: "" });
+    setNewPrompt({ title: "", content: "", category: "" });
   };
 
   const onUserClickEdit = (prompt: PromptTemplate) => {
@@ -292,6 +297,15 @@ export default function OptionsPage() {
             className="mb-2"
             data-testid="prompt-form-title-input"
           />
+          <Input
+            placeholder="Category (optional)"
+            value={newPrompt.category}
+            onChange={(e) => {
+              setNewPrompt({ ...newPrompt, category: e.target.value });
+            }}
+            className="mb-2"
+            data-testid="prompt-form-category-input"
+          />
           <Textarea
             placeholder="New prompt content"
             value={newPrompt.content}
@@ -312,92 +326,116 @@ export default function OptionsPage() {
       </Card>
 
       <div className="space-y-4">
-        {promptList.map((promptItem) => (
-          <Card
-            key={promptItem.id}
-            className="overflow-hidden"
-            data-testid="prompt-list-item"
-          >
-            <CardContent className="p-4">
-              {editingId === promptItem.id ? (
-                <>
-                  <Input
-                    value={promptItem.title}
-                    onChange={(e) => {
-                      setPromptList(
-                        promptList.map((p) =>
-                          p.id === promptItem.id
-                            ? { ...p, title: e.target.value }
-                            : p,
-                        ),
-                      );
-                    }}
-                    className="mb-2"
-                    data-testid="prompt-list-item-edit-title"
-                  />
-                  <Textarea
-                    value={promptItem.content}
-                    onChange={(e) => {
-                      setPromptList(
-                        promptList.map((p) =>
-                          p.id === promptItem.id
-                            ? { ...p, content: e.target.value }
-                            : p,
-                        ),
-                      );
-                    }}
-                    className="mb-2 min-h-[140px]"
-                    data-testid="prompt-list-item-edit-content"
-                  />
-                  <div className="flex justify-end space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={onUserClickCancel}
-                      data-testid="prompt-list-item-edit-cancel"
+        <select
+          value={filterCategory}
+          onChange={(e) => setFilterCategory(e.target.value)}
+          className="mb-4 w-full rounded-md border p-2 dark:border-gray-700 dark:bg-gray-800"
+          data-testid="category-filter"
+        >
+          <option value="All">All Categories</option>
+          <option value="Uncategorized">Uncategorized</option>
+          {Array.from(
+            new Set(promptList.map((p) => p.category).filter(Boolean)),
+          ).map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
+        {promptList
+          .filter((p) =>
+            filterCategory === "All"
+              ? true
+              : filterCategory === "Uncategorized"
+                ? !p.category
+                : p.category === filterCategory,
+          )
+          .map((promptItem) => (
+            <Card
+              key={promptItem.id}
+              className="overflow-hidden"
+              data-testid="prompt-list-item"
+            >
+              <CardContent className="p-4">
+                {editingId === promptItem.id ? (
+                  <>
+                    <Input
+                      value={promptItem.title}
+                      onChange={(e) => {
+                        setPromptList(
+                          promptList.map((p) =>
+                            p.id === promptItem.id
+                              ? { ...p, title: e.target.value }
+                              : p,
+                          ),
+                        );
+                      }}
+                      className="mb-2"
+                      data-testid="prompt-list-item-edit-title"
+                    />
+                    <Textarea
+                      value={promptItem.content}
+                      onChange={(e) => {
+                        setPromptList(
+                          promptList.map((p) =>
+                            p.id === promptItem.id
+                              ? { ...p, content: e.target.value }
+                              : p,
+                          ),
+                        );
+                      }}
+                      className="mb-2 min-h-[140px]"
+                      data-testid="prompt-list-item-edit-content"
+                    />
+                    <div className="flex justify-end space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={onUserClickCancel}
+                        data-testid="prompt-list-item-edit-cancel"
+                      >
+                        <X className="mr-1 size-4" /> Cancel
+                      </Button>
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => onUserClickSave(promptItem)}
+                        data-testid="prompt-list-item-edit-submit"
+                      >
+                        <Check className="mr-1 size-4" /> Save
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h3
+                      className="mb-2 font-semibold"
+                      data-testid="prompt-list-item-title"
                     >
-                      <X className="mr-1 size-4" /> Cancel
-                    </Button>
-                    <Button
-                      variant="default"
-                      size="sm"
-                      onClick={() => onUserClickSave(promptItem)}
-                      data-testid="prompt-list-item-edit-submit"
+                      {promptItem.title}
+                    </h3>
+                    <p
+                      className="mb-4 line-clamp-2 overflow-y-auto text-sm text-muted-foreground"
+                      data-testid="prompt-list-item-content"
                     >
-                      <Check className="mr-1 size-4" /> Save
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <h3
-                    className="mb-2 font-semibold"
-                    data-testid="prompt-list-item-title"
-                  >
-                    {promptItem.title}
-                  </h3>
-                  <p
-                    className="mb-4 line-clamp-2 overflow-y-auto text-sm text-muted-foreground"
-                    data-testid="prompt-list-item-content"
-                  >
-                    {promptItem.content}
-                  </p>
-                  <div className="flex justify-end space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      data-testid="prompt-list-item-edit-button"
-                      onClick={() => onUserClickEdit(promptItem)}
-                    >
-                      <Pencil className="mr-1 size-4" /> Edit
-                    </Button>
-                    <DeleteButton promptId={promptItem.id} />
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+                      {promptItem.content}
+                    </p>
+                    <div className="flex justify-end space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        data-testid="prompt-list-item-edit-button"
+                        onClick={() => onUserClickEdit(promptItem)}
+                      >
+                        <Pencil className="mr-1 size-4" /> Edit
+                      </Button>
+                      <DeleteButton promptId={promptItem.id} />
+                    </div>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          ))}
       </div>
     </div>
   );
