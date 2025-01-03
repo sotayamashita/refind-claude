@@ -318,4 +318,68 @@ test.describe("Chrome Extension Options Page", () => {
       },
     ]);
   });
+
+  test("should display category badges correctly", async ({ page }) => {
+    // Create a template with category
+    const titleInput = page.getByTestId("prompt-form-title-input");
+    const contentTextarea = page.getByTestId("prompt-form-content-input");
+    const categoryInput = page.getByTestId("prompt-form-category-input");
+
+    await titleInput.fill("Template with Category");
+    await contentTextarea.fill("Content");
+    await categoryInput.fill("Test Category");
+    await page.getByTestId("prompt-form-submit-button").click();
+
+    // Create a template without category
+    await titleInput.fill("Template without Category");
+    await contentTextarea.fill("Content");
+    await page.getByTestId("prompt-form-submit-button").click();
+
+    // Verify badge is displayed for categorized template
+    const categorizedCard = page.getByText("Template with Category").locator("..");
+    await expect(categorizedCard.getByTestId("prompt-list-item-category")).toHaveText("Test Category");
+
+    // Verify no badge is displayed for uncategorized template
+    const uncategorizedCard = page.getByText("Template without Category").locator("..");
+    await expect(uncategorizedCard.getByTestId("prompt-list-item-category")).not.toBeVisible();
+  });
+
+  test("should edit template category", async ({ page }) => {
+    // Create a template with category
+    const titleInput = page.getByTestId("prompt-form-title-input");
+    const contentTextarea = page.getByTestId("prompt-form-content-input");
+    const categoryInput = page.getByTestId("prompt-form-category-input");
+
+    await titleInput.fill("Original Title");
+    await contentTextarea.fill("Original Content");
+    await categoryInput.fill("Original Category");
+    await page.getByTestId("prompt-form-submit-button").click();
+
+    // Get first card and enter edit mode
+    const promptCard = page.getByTestId("prompt-list-item").first();
+    await promptCard.getByTestId("prompt-list-item-edit-button").click();
+
+    // Verify category input appears after content textarea
+    const editContentTextarea = promptCard.getByTestId("prompt-list-item-edit-content");
+    const editCategoryInput = promptCard.getByTestId("prompt-list-item-edit-category");
+    
+    // Get bounding boxes to verify positioning
+    const contentBox = await editContentTextarea.boundingBox();
+    const categoryBox = await editCategoryInput.boundingBox();
+    
+    // Ensure elements are visible and have bounding boxes
+    expect(contentBox).not.toBeNull();
+    expect(categoryBox).not.toBeNull();
+    
+    if (contentBox && categoryBox) {
+      expect(categoryBox.y).toBeGreaterThan(contentBox.y + contentBox.height);
+    }
+
+    // Edit category
+    await editCategoryInput.fill("Updated Category");
+    await promptCard.getByTestId("prompt-list-item-edit-submit").click();
+
+    // Verify category is updated
+    await expect(promptCard.getByTestId("prompt-list-item-category")).toHaveText("Updated Category");
+  });
 });
