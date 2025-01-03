@@ -38,7 +38,7 @@ export async function saveNewPrompt(newPrompt: Omit<PromptTemplate, "id">) {
   const promptWithId: PromptTemplate = {
     ...newPrompt,
     id: new Date().toISOString(),
-    category: newPrompt.category || "Uncategorized", // Set default category if none provided
+    category: newPrompt.category || "", // Empty string for uncategorized templates
   };
 
   await optionsStorage.set({

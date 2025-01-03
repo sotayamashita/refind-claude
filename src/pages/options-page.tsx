@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import {
   saveNewPrompt,
   getPromptTemplates,
@@ -145,6 +146,7 @@ export default function OptionsPage() {
           id: `imported-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           title: item.title.trim(),
           content: item.content.trim(),
+          category: item.category || "", // Preserve category or set empty string
         }));
 
       if (validTemplates.length === 0) {
@@ -297,15 +299,6 @@ export default function OptionsPage() {
             className="mb-2"
             data-testid="prompt-form-title-input"
           />
-          <Input
-            placeholder="Category (optional)"
-            value={newPrompt.category}
-            onChange={(e) => {
-              setNewPrompt({ ...newPrompt, category: e.target.value });
-            }}
-            className="mb-2"
-            data-testid="prompt-form-category-input"
-          />
           <Textarea
             placeholder="New prompt content"
             value={newPrompt.content}
@@ -314,6 +307,15 @@ export default function OptionsPage() {
             }}
             className="mb-2 min-h-[140px]"
             data-testid="prompt-form-content-input"
+          />
+          <Input
+            placeholder="Category (optional)"
+            value={newPrompt.category}
+            onChange={(e) => {
+              setNewPrompt({ ...newPrompt, category: e.target.value });
+            }}
+            className="mb-2"
+            data-testid="prompt-form-category-input"
           />
           <Button
             onClick={onUserClickAddPrompt}
@@ -387,6 +389,21 @@ export default function OptionsPage() {
                       className="mb-2 min-h-[140px]"
                       data-testid="prompt-list-item-edit-content"
                     />
+                    <Input
+                      placeholder="Category (optional)"
+                      value={promptItem.category || ""}
+                      onChange={(e) => {
+                        setPromptList(
+                          promptList.map((p) =>
+                            p.id === promptItem.id
+                              ? { ...p, category: e.target.value }
+                              : p,
+                          ),
+                        );
+                      }}
+                      className="mb-2"
+                      data-testid="prompt-list-item-edit-category"
+                    />
                     <div className="flex justify-end space-x-2">
                       <Button
                         variant="outline"
@@ -409,11 +426,20 @@ export default function OptionsPage() {
                 ) : (
                   <>
                     <h3
-                      className="mb-2 font-semibold"
+                      className="mb-1 font-semibold"
                       data-testid="prompt-list-item-title"
                     >
                       {promptItem.title}
                     </h3>
+                    {promptItem.category && (
+                      <Badge
+                        variant="outline"
+                        className="mb-2"
+                        data-testid="prompt-list-item-category"
+                      >
+                        {promptItem.category}
+                      </Badge>
+                    )}
                     <p
                       className="mb-4 line-clamp-2 overflow-y-auto text-sm text-muted-foreground"
                       data-testid="prompt-list-item-content"
