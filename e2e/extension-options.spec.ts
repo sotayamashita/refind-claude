@@ -336,12 +336,20 @@ test.describe("Chrome Extension Options Page", () => {
     await page.getByTestId("prompt-form-submit-button").click();
 
     // Verify badge is displayed for categorized template
-    const categorizedCard = page.getByText("Template with Category").locator("..");
-    await expect(categorizedCard.getByTestId("prompt-list-item-category")).toHaveText("Test Category");
+    const categorizedCard = page
+      .getByText("Template with Category")
+      .locator("..");
+    await expect(
+      categorizedCard.getByTestId("prompt-list-item-category"),
+    ).toHaveText("Test Category");
 
     // Verify no badge is displayed for uncategorized template
-    const uncategorizedCard = page.getByText("Template without Category").locator("..");
-    await expect(uncategorizedCard.getByTestId("prompt-list-item-category")).not.toBeVisible();
+    const uncategorizedCard = page
+      .getByText("Template without Category")
+      .locator("..");
+    await expect(
+      uncategorizedCard.getByTestId("prompt-list-item-category"),
+    ).not.toBeVisible();
   });
 
   test("should edit template category", async ({ page }) => {
@@ -360,17 +368,21 @@ test.describe("Chrome Extension Options Page", () => {
     await promptCard.getByTestId("prompt-list-item-edit-button").click();
 
     // Verify category input appears after content textarea
-    const editContentTextarea = promptCard.getByTestId("prompt-list-item-edit-content");
-    const editCategoryInput = promptCard.getByTestId("prompt-list-item-edit-category");
-    
+    const editContentTextarea = promptCard.getByTestId(
+      "prompt-list-item-edit-content",
+    );
+    const editCategoryInput = promptCard.getByTestId(
+      "prompt-list-item-edit-category",
+    );
+
     // Get bounding boxes to verify positioning
     const contentBox = await editContentTextarea.boundingBox();
     const categoryBox = await editCategoryInput.boundingBox();
-    
+
     // Ensure elements are visible and have bounding boxes
     expect(contentBox).not.toBeNull();
     expect(categoryBox).not.toBeNull();
-    
+
     if (contentBox && categoryBox) {
       expect(categoryBox.y).toBeGreaterThan(contentBox.y + contentBox.height);
     }
@@ -380,6 +392,8 @@ test.describe("Chrome Extension Options Page", () => {
     await promptCard.getByTestId("prompt-list-item-edit-submit").click();
 
     // Verify category is updated
-    await expect(promptCard.getByTestId("prompt-list-item-category")).toHaveText("Updated Category");
+    await expect(
+      promptCard.getByTestId("prompt-list-item-category"),
+    ).toHaveText("Updated Category");
   });
 });
